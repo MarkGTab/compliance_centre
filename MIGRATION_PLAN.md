@@ -205,31 +205,42 @@ Laravel app (or shared as a package later).
 * **Hosting:** same pattern as `reporting`: Apache + Cloudflare Tunnel/Access, GitHub Actions deploy.
 * **Repo:** `compliance_centre` (this one).
 
-## 8. Workstreams and rough effort
+## 8. Workstreams and rough effort (AI-assisted)
 
-Estimates are developer-days for one developer who knows the stack, working with AI assistance.
-Ranges reflect the open questions in §9.
+Estimated as **one developer driving Claude Code**: the AI writes the bulk of the code, and the
+developer specifies, reviews, tests and handles infrastructure. The Base44 export is a near-complete
+spec (every field, rule, email text and cron time), which is what makes the porting compress so much.
+The parts that don't compress are review, security checks, IT setup and UAT.
 
-| # | Workstream | Days |
-|---|---|---|
-| 0 | Setup: repo layout, Laravel skeleton, DB/schema, Cloudflare Access app, CI/deploy, dev/staging | 2–3 |
-| 1 | Schema: ~26 migrations + models + relations, enums as constants | 3–4 |
-| 2 | API: generic CRUD (list/filter/sort/bulk), server-side scoring, change-log, authorisation (roles + section permissions) | 4–6 |
-| 3 | Frontend swap: SDK → API client adapter, AuthContext → `/api/me`, delete 6 auth pages, remove realtime, fix call sites | 4–6 |
-| 4 | People integration: employees/departments from `tab_employees`, pickers, email mapping, leaver handling | 2–3 |
-| 5 | Jobs + notifications: 13 scheduled, 2 observers, 6 endpoints, email templates + Teams cards (reusing `GraphMailer`/`GraphTeams`) | 4–6 |
-| 6 | Attestations rework (signed-in flow instead of magic link) | 2–3 |
-| 7 | Files + AI: S3 upload/download via `doc_store` (+ ledger change-log), Anthropic proxy for 6 AI assists | 2–3 |
-| 8 | ~~Data migration~~ (Base44 data is test data): seed reference data only (risk categories, committees, appetite, section permissions) | 1 |
-| 9 | Testing, UAT with Compliance/Risk, parallel run, cutover | 5–8 |
-| | **Total** | **≈ 29–42 days (≈ 6–9 weeks for one developer)** |
+| # | Workstream | AI does | Human does | Days |
+|---|---|---|---|---|
+| 0 | Setup | Laravel skeleton, CI/deploy workflow | Server/vhost, Cloudflare Access app, S3/Graph credentials, DB schema + login | 1–2 |
+| 1 | Schema | ~27 migrations + models from the entity JSON | Review types/FKs | 0.5 |
+| 2 | API + authorisation | Generic CRUD, filters, change-log, roles + section permissions as policies | **Careful review + tests of who can read/edit what** (conflicts, gifts) | 1–2 |
+| 3 | Frontend swap | SDK-compatible API client, AuthContext → `/api/me`, delete auth pages, remove realtime | Click through all ~40 pages | 1–2 |
+| 4 | People | Employee/department lookups from `tab_employees`, leaver job | Confirm leaver rule + field mapping | 0.5–1 |
+| 5 | Jobs + notifications | Port 21 functions to commands/observers, `Notifier`, email/Teams templates | Trigger each job in dev, check emails | 1–2 |
+| 6 | Attestations | Signed-in flow | Test with a real campaign | 0.5 |
+| 7 | Files + AI | S3 upload/download via `doc_store`/`LedgerService`, Anthropic proxy | Verify docs appear correctly in `doc_store` | 0.5–1 |
+| 8 | Seed data | Seeders for categories, committees, appetite, permissions | Supply real reference values | 0.25 |
+| 9 | Testing, UAT, cutover | Test suite, fixes from feedback | **UAT with Compliance/Risk**, go-live | 3–5 |
+| | **Total developer effort** | | | **≈ 9–16 days** |
 
-**Ways to bring it down:**
+**Elapsed time: realistically 3–4 weeks.** The developer effort is about 2–3 weeks, but calendar time
+is set by things outside the build: IT tasks (Graph `Mail.Send` for `compliance@`, Teams webhook, S3
+credentials, Cloudflare Access app), and Compliance/Risk's availability for UAT. Start those requests
+on day one so they're done by the time the build needs them.
+
+**Where the risk sits** (spend the review time here, not on the UI):
+* Authorisation: getting read access right for sensitive registers (§6).
+* `doc_store` writes going through `LedgerService` correctly.
+* Scheduled jobs emailing the right people: test with the dev redirect before go-live.
+
+**Notes:**
 * Real registers can be loaded through the app's existing Excel import features (risk register,
   conflicts, employees) once it's live, so no Base44 export is needed.
-* Phase it. **Phase 1:** Risk, Controls, KRIs, Actions, Incidents, Policies, Insurance (the
-  registers). **Phase 2:** Board governance and attestations. **Phase 3:** report builder and AI
-  assists.
+* At this size, phasing isn't needed to save time. It's only worth doing if Compliance wants the
+  registers live before board governance/attestations are ready.
 
 ## 9. Open questions (these move the estimate)
 
