@@ -1,6 +1,6 @@
 # Compliance Centre — migration off Base44 (rough plan)
 
-**Status:** draft for estimating · **Source reviewed:** `safe-fiery-guard-flow.zip` (Base44 export of
+**Status:** draft v2 for estimating (updated with answers 29 Oct) · **Source reviewed:** `safe-fiery-guard-flow.zip` (Base44 export of
 "RiskRegister Pro", 29 Oct 2026) · **Author:** Claude Code for mg@tabhq.com
 
 ## 1. What we're migrating
@@ -20,7 +20,7 @@ Platform services in use, and the replacement for each:
 | `entities.X.list/filter/get/create/update/delete/bulk*` | All data | REST API on our own DB (see §3) |
 | `entities.X.subscribe` (realtime, 21 uses) | Live refresh of registers/top bar | Drop it: React Query refetch on focus or after mutation. No websockets needed |
 | `Core.SendEmail` (15 uses) | All notifications | Our mailer (Laravel Mail via the existing M365/SMTP setup) |
-| `Core.UploadFile` (4 uses) | Policy/insurance docs, gift evidence, meeting packs | Our file storage (S3 is already used by `main`; or Azure Blob / SharePoint) |
+| `Core.UploadFile` (4 uses) | Policy/insurance docs, gift evidence, meeting packs | **S3 + the existing `doc_store` table** (see §3a) |
 | `Core.InvokeLLM` (6 uses) | AI assists: risk wording, register/conflict import parsing, policy/insurance/gift doc extraction | Server-side Anthropic API proxy (same pattern as `reporting`'s `InsightsProxy`) |
 | Scheduler + entity triggers | 15 workflows | Cron (Laravel scheduler) + model observers |
 
@@ -41,7 +41,7 @@ connection, exposed as `vw_tab_employees` in `reporting`).
 | `line_manager` | `line_manager_id` | |
 | `status` (Active/Leaver) | `end_date` / `disabled` / `deleted_at` | Leaver = `end_date <= today` or `disabled = 1` (confirm the rule) |
 | `mobile` | `work_number` / `phone_number` | |
-| **`email`** | ⚠️ **not in `vw_tab_employees`** | **Blocker to confirm.** The app emails people constantly and Cloudflare Access identifies people by email. Check whether the base `tab_employees` table has a work email. If not, **add `work_email`** (see §4) |
+| `email` | `tab_employees` email column | ✅ **Confirmed: exists on the base table** (just not exposed in `vw_tab_employees`). Used for notifications and to map the Cloudflare Access identity to an employee |
 | `linked_user`, `requires_login` | n/a | Not needed: Cloudflare Access means every employee can sign in, with no separate user records or invites |
 
 ### Department → existing departments table + small extension
@@ -102,13 +102,37 @@ editor's **email**.
 `created_at`, `updated_at`, `created_by`. Base44 adds `created_date`, `created_by` and `id`
 implicitly, and the UI sorts on `-created_date`.
 
+## 3a. Documents → S3 + `doc_store`
+
+Answer: docs live in S3 via the `doc_store` table used across the platform (`narrative-qldb`
+connection; model `App\Models\Ledger\DocStore` in `tabhq/main`, written through
+`LedgerService::insert` so the ledger change-log applies). `doc_store` is already polymorphic,
+so **no new columns are needed**:
+
+| `doc_store` column | Compliance use |
+|---|---|
+| `doc_for` | compliance table name, e.g. `cc_policy`, `cc_insurance_policy`, `cc_gift_declaration`, `cc_meeting` |
+| `doc_for_id` | the record's id |
+| `doc_usage` | tags, e.g. `["Compliance", "Policy document"]` / `["Compliance", "Meeting pack"]` |
+| `s3_path` | `compliance/<table>/<id>/<uuid>.<ext>` in the existing private bucket |
+| `status` | `private` (served via `temporaryUrl`, as `DocStore::getS3TempUrl()` does) |
+| `created_by` | `{ "account_id": "<editor email>", "created_at": … }` |
+
+The Base44 URL fields `Policy.policy_document`, `InsurancePolicy.policy_document`,
+`GiftHospitalityDeclaration.submission_document` and `Meeting.pack_attachment` are **dropped**:
+documents are looked up by `doc_for`/`doc_for_id`, which also allows more than one document per record
+(e.g. policy versions). `Control.evidence_link` stays a plain URL column (it links out, e.g. to
+SharePoint). The policy/insurance "AI extract from document" assists read the file from S3
+server-side.
+
 ## 4. New fields on EXISTING tables
 
-Kept to a minimum on purpose. The only candidates:
+**Result: none required.** For the record:
 
 | Table | Field | Why | Needed? |
 |---|---|---|---|
-| `tab_employees` | `work_email` (varchar, unique) | Notifications + mapping the Cloudflare Access identity to an employee | **Only if** it doesn't already exist on the base table (it isn't in `vw_tab_employees`). Confirm first |
+| `tab_employees` | ~~`work_email`~~ | — | ✅ **Not needed**: the email column already exists |
+| `doc_store` | — | — | ✅ **Not needed**: `doc_for` / `doc_for_id` / `doc_usage` cover it (§3a) |
 | departments table | `head_employee_id`, `line_of_defence` | Department owner + 3 lines of defence | Optional: avoided by `cc_department_settings` |
 
 Everything else lives in the new `compliance` schema. No change to `reporting` views is needed for
@@ -166,26 +190,26 @@ Ranges reflect the open questions in §9.
 | 1 | Schema: ~26 migrations + models + relations, enums as constants | 3–4 |
 | 2 | API: generic CRUD (list/filter/sort/bulk), server-side scoring, change-log, authorisation (roles + section permissions) | 4–6 |
 | 3 | Frontend swap: SDK → API client adapter, AuthContext → `/api/me`, delete 6 auth pages, remove realtime, fix call sites | 4–6 |
-| 4 | People integration: employees/departments from `tab_employees`, pickers, email mapping, leaver handling | 3–4 |
+| 4 | People integration: employees/departments from `tab_employees`, pickers, email mapping, leaver handling | 2–3 |
 | 5 | Jobs + emails: 13 scheduled, 2 observers, 6 endpoints, email templates | 5–7 |
 | 6 | Attestations rework (signed-in flow instead of magic link) | 2–3 |
-| 7 | Files + AI: upload storage, Anthropic proxy for 6 AI assists | 2–3 |
-| 8 | Data migration: export from Base44, map Base44 Employee/User ids → `tab_employees.id`, rehost uploaded files, reconcile counts | 4–6 |
+| 7 | Files + AI: S3 upload/download via `doc_store` (+ ledger change-log), Anthropic proxy for 6 AI assists | 2–3 |
+| 8 | ~~Data migration~~ (Base44 data is test data): seed reference data only (risk categories, committees, appetite, section permissions) | 1 |
 | 9 | Testing, UAT with Compliance/Risk, parallel run, cutover | 5–8 |
-| | **Total** | **≈ 34–50 days (≈ 7–10 weeks for one developer)** |
+| | **Total** | **≈ 30–43 days (≈ 6–9 weeks for one developer)** |
 
 **Ways to bring it down:**
-* Skip data migration (6–8 days less in all) if the Base44 data is still mostly test data, and re-key
-  the real registers from the existing Excel import features.
+* Real registers can be loaded through the app's existing Excel import features (risk register,
+  conflicts, employees) once it's live, so no Base44 export is needed.
 * Phase it. **Phase 1:** Risk, Controls, KRIs, Actions, Incidents, Policies, Insurance (the
   registers). **Phase 2:** Board governance and attestations. **Phase 3:** report builder and AI
   assists.
 
 ## 9. Open questions (these move the estimate)
 
-1. Does `tab_employees` (base table) have a work email column? If not, can one be added?
-2. Is the Base44 app in live use with real data, or still test data? (Decides workstream 8.)
-3. Where should files live: S3, Azure Blob or SharePoint?
+1. ~~Work email on `tab_employees`?~~ ✅ Exists.
+2. ~~Live or test data?~~ ✅ Test data: no migration.
+3. ~~File storage?~~ ✅ S3 + `doc_store`.
 4. Email: which sending route (M365 SMTP / Graph, or the mailer `main` uses)?
 5. Happy to drop magic-link attestations in favour of sign-in?
 6. Laravel backend, or the lighter `reporting`-style PHP front controller?
