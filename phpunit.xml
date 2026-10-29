@@ -26,6 +26,11 @@
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>
+        <env name="PEOPLE_DB_CONNECTION" value="sqlite"/>
+        <env name="CF_ACCESS_TEAM_DOMAIN" value=""/>
+        <env name="CF_ACCESS_AUD" value=""/>
+        <env name="DEV_USER_EMAIL" value=""/>
+        <env name="MAIL_REDIRECT_TO" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

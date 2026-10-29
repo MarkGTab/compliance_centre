@@ -245,6 +245,31 @@ on day one so they're done by the time the build needs them.
 * At this size, phasing isn't needed to save time. It's only worth doing if Compliance wants the
   registers live before board governance/attestations are ready.
 
+## 8a. Build progress
+
+| Step | Status |
+|---|---|
+| Laravel 13 skeleton, React frontend in `frontend/`, Base44 spec in `legacy/base44/` | ✅ |
+| `cc_*` tables (25 entity tables + roles, permissions, department settings, settings), additive only | ✅ |
+| Models; read-only `tab_employees` / departments; seeder (first admin mg@, committees, sender) | ✅ |
+| Cloudflare Access sign-in (port of `reporting`'s `Identity.php`) | ✅ |
+| Generic entity API in the Base44 SDK's shape + server-side roles/section permissions + audit trail | ✅ 16 tests |
+| Frontend: swap `@base44/sdk` for an `/api` client | next |
+| Scheduled jobs + Graph email/Teams notifications | |
+| Documents via S3 + `doc_store`, AI assists | |
+| Admin settings page (sender, Teams webhook) | |
+
+**Change from §3:** the array fields (`Control.linked_risks`, `InsurancePolicy.linked_risks`,
+campaign audiences, `Meeting.attendees`/`apologies`, report recipients) are **JSON columns**, not
+join tables. That keeps the frontend's record shape unchanged (it reads and writes them as arrays,
+and uses `$addToSet`/`$pull` on `linked_risks`). A reporting view can still unpack them with
+`JSON_TABLE` if needed.
+
+**Read access, as built:** personal-data registers (conflicts, gifts, attestation responses,
+recusals, audit trail) need the section's *view* permission; without it a person sees only the rows
+naming them. Other registers stay readable by all signed-in staff, as in Base44, so the dashboards
+keep working. All writes are checked against role + section *edit* permission + department scope.
+
 ## 9. Decisions log
 
 | # | Question | Decision |

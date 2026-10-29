@@ -44,7 +44,7 @@ class Employee extends Model
 
     public static function findByEmail(string $email): ?self
     {
-        return static::query()->whereRaw('lower(' . static::emailColumn() . ') = ?', [strtolower($email)])->first();
+        return static::query()->whereRaw('lower('.static::emailColumn().') = ?', [strtolower($email)])->first();
     }
 
     /** Leaver = disabled, soft-deleted, or past their end date. */
@@ -64,7 +64,7 @@ class Employee extends Model
 
     public function fullName(): string
     {
-        return trim($this->given_names . ' ' . $this->family_name);
+        return trim($this->given_names.' '.$this->family_name);
     }
 
     public function toEntity(): array

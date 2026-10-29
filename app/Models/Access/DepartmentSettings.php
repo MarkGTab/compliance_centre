@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DepartmentSettings extends Model
 {
     const CREATED_AT = 'created_date';
+
     const UPDATED_AT = 'updated_date';
 
     protected $table = 'cc_department_settings';

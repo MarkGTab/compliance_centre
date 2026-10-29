@@ -15,6 +15,7 @@ abstract class Entity extends Model
     use HasUuids;
 
     const CREATED_AT = 'created_date';
+
     const UPDATED_AT = 'updated_date';
 
     protected $guarded = ['id', 'created_by', 'created_date', 'updated_date'];
@@ -28,7 +29,7 @@ abstract class Entity extends Model
     /** @return array<string, array> */
     public static function schemaFields(): array
     {
-        return config('entities.' . static::entityName() . '.fields', []);
+        return config('entities.'.static::entityName().'.fields', []);
     }
 
     protected function casts(): array

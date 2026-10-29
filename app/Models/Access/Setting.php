@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 class Setting extends Model
 {
     const CREATED_AT = null;
+
     const UPDATED_AT = 'updated_date';
 
     protected $table = 'cc_setting';
