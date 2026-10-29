@@ -1,0 +1,244 @@
+{
+  "name": "Risk",
+  "properties": {
+    "appetite_status": {
+      "enum": [
+        "Green",
+        "Amber",
+        "Red"
+      ],
+      "title": "Appetite Status",
+      "type": "string"
+    },
+    "category": {
+      "description": "Reference to Risk Category entity (classification applied across all levels)",
+      "format": "uuid",
+      "relation": "RiskCategory",
+      "title": "Category",
+      "type": "string"
+    },
+    "cause": {
+      "title": "Cause",
+      "type": "string"
+    },
+    "consequence": {
+      "title": "Consequence",
+      "type": "string"
+    },
+    "department": {
+      "description": "Reference to Department entity",
+      "format": "uuid",
+      "relation": "Department",
+      "title": "Department",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "event": {
+      "title": "Event",
+      "type": "string"
+    },
+    "inherent_impact": {
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Inherent Impact",
+      "type": "integer"
+    },
+    "inherent_likelihood": {
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Inherent Likelihood",
+      "type": "integer"
+    },
+    "inherent_score": {
+      "description": "Calculated: inherent_likelihood x inherent_impact",
+      "title": "Inherent Score",
+      "type": "integer"
+    },
+    "initiative": {
+      "description": "The project or programme this risk belongs to (Project & Change level only)",
+      "title": "Initiative / Programme",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "last_reviewed": {
+      "format": "date",
+      "title": "Last Reviewed",
+      "type": "string"
+    },
+    "next_review": {
+      "format": "date",
+      "title": "Next Review",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee who owns this risk (master people record).",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "parent_risk": {
+      "description": "Escalation link to the parent risk at the level above (L3/L4 -> L2 Operational, L2 -> L1 Strategic)",
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Parent Risk",
+      "type": "string"
+    },
+    "project_status": {
+      "default": "Active",
+      "enum": [
+        "Active",
+        "Closed"
+      ],
+      "title": "Project Status",
+      "type": "string"
+    },
+    "residual_impact": {
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Residual Impact",
+      "type": "integer"
+    },
+    "residual_likelihood": {
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Residual Likelihood",
+      "type": "integer"
+    },
+    "residual_score": {
+      "description": "Calculated: residual_likelihood x residual_impact",
+      "title": "Residual Score",
+      "type": "integer"
+    },
+    "risk_ref": {
+      "description": "Auto-generated unique reference for this risk",
+      "title": "Risk Reference",
+      "type": "string"
+    },
+    "status": {
+      "default": "Open",
+      "enum": [
+        "Open",
+        "Monitoring",
+        "Closed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_date": {
+      "format": "date",
+      "title": "Target Date",
+      "type": "string"
+    },
+    "target_score": {
+      "title": "Target Score",
+      "type": "number"
+    },
+    "tier": {
+      "default": "Departmental",
+      "description": "TAB four-level hierarchy: L1 Strategic, L2 Operational, L3 Departmental, L4 Project & Change",
+      "enum": [
+        "Strategic",
+        "Operational",
+        "Departmental",
+        "Project & Change"
+      ],
+      "title": "Tier (Risk Register Level)",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "trend": {
+      "enum": [
+        "Improving",
+        "Stable",
+        "Worsening"
+      ],
+      "title": "Trend",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,134 @@
+{
+  "name": "Action",
+  "properties": {
+    "bucket": {
+      "enum": [
+        "30-day",
+        "60-day",
+        "90-day"
+      ],
+      "title": "Bucket",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "due_date": {
+      "format": "date",
+      "title": "Due Date",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "linked_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Linked Risk",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee responsible for this action.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "priority": {
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "status": {
+      "default": "Open",
+      "enum": [
+        "Open",
+        "In Progress",
+        "Complete"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

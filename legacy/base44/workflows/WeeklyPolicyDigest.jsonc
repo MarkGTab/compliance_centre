@@ -1,0 +1,45 @@
+{
+  "name": "Weekly Policy Digest",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "weekly_policy_digest",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "digest": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "weeklyPolicyDigest",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Weekly policy digest",
+            "description": "Due/overdue digest to admins"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * 1",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Weekly: email CRO/Compliance (admins) a digest of policies due or overdue in the next 60 days."
+}

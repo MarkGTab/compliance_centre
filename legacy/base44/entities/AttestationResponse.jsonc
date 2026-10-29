@@ -1,0 +1,171 @@
+{
+  "name": "AttestationResponse",
+  "properties": {
+    "campaign": {
+      "format": "uuid",
+      "relation": "AttestationCampaign",
+      "title": "Campaign",
+      "type": "string"
+    },
+    "employee": {
+      "description": "The Employee this attestation is assigned to (master people record).",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Employee",
+      "type": "string"
+    },
+    "exception_detail": {
+      "title": "Exception Detail",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "linked_action": {
+      "format": "uuid",
+      "relation": "Action",
+      "title": "Linked Action",
+      "type": "string"
+    },
+    "linked_conflict": {
+      "format": "uuid",
+      "relation": "ConflictOfInterest",
+      "title": "Linked Conflict of Interest",
+      "type": "string"
+    },
+    "locked": {
+      "default": false,
+      "description": "True once signed - the response is immutable",
+      "title": "Locked",
+      "type": "boolean"
+    },
+    "magic_link": {
+      "description": "Full tokenised public URL for this response (re-sent by reminders).",
+      "title": "Magic Link URL",
+      "type": "string"
+    },
+    "recipient_email": {
+      "description": "The email address the magic link was sent to.",
+      "title": "Recipient Email",
+      "type": "string"
+    },
+    "response_ref": {
+      "description": "Auto-generated unique reference for this attestation response",
+      "title": "Response Reference",
+      "type": "string"
+    },
+    "response_type": {
+      "enum": [
+        "Confirmed",
+        "Confirmed with Exceptions",
+        "Declined"
+      ],
+      "title": "Response Type",
+      "type": "string"
+    },
+    "signature_name": {
+      "title": "Signature (typed full name)",
+      "type": "string"
+    },
+    "signed_datetime": {
+      "title": "Signed Datetime",
+      "type": "string"
+    },
+    "status": {
+      "default": "Pending",
+      "enum": [
+        "Pending",
+        "Completed",
+        "Exception Raised",
+        "Overdue"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "token": {
+      "description": "Long, random, single-use token that unlocks exactly this response (no login). Dead once the response is locked.",
+      "title": "Magic Link Token",
+      "type": "string"
+    },
+    "user": {
+      "description": "The platform User account backing this employee, if requires_login = Yes. Kept for the authenticated 'My Attestations' view; null for email-only staff.",
+      "format": "uuid",
+      "relation": "User",
+      "title": "User (linked account)",
+      "type": "string"
+    }
+  },
+  "required": [
+    "campaign",
+    "employee"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "data.user": "{{user.id}}"
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

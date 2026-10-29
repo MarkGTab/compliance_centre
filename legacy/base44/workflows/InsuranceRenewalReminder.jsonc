@@ -1,0 +1,45 @@
+{
+  "description": "Daily: email insurance owners 60, 30, 7 and 0 days before expiry.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "35 7 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "insurance_renewal_reminder",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "remind": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "insuranceRenewalReminders",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Insurance renewal reminders",
+            "description": "60 / 30 / 7 / 0 day emails to owners"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Insurance Renewal Reminder"
+}

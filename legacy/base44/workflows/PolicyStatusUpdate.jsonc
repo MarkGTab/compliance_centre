@@ -1,0 +1,45 @@
+{
+  "name": "Policy Status Update",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "policy_status_update",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "update": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "updatePolicyStatuses",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Update policy review statuses",
+            "description": "Due for Review / Overdue"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 7 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "description": "Daily: set policies to Due for Review (within 60 days) or Overdue (past next review)."
+}

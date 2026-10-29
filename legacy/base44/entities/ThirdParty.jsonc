@@ -1,0 +1,76 @@
+{
+  "name": "ThirdParty",
+  "properties": {
+    "contract_owner": {
+      "description": "Employee who owns this third-party contract.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Contract Owner",
+      "type": "string"
+    },
+    "criticality": {
+      "enum": [
+        "Critical",
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "title": "Criticality",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "review_date": {
+      "format": "date",
+      "title": "Review Date",
+      "type": "string"
+    },
+    "risk_rating": {
+      "enum": [
+        "Red",
+        "Amber",
+        "Green"
+      ],
+      "title": "Risk Rating",
+      "type": "string"
+    },
+    "service": {
+      "title": "Service",
+      "type": "string"
+    }
+  },
+  "required": [
+    "provider"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

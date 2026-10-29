@@ -1,0 +1,115 @@
+{
+  "name": "BoardAction",
+  "properties": {
+    "assignee": {
+      "description": "Employee assigned to this board action.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Assignee",
+      "type": "string"
+    },
+    "completed_date": {
+      "format": "date",
+      "title": "Completed Date",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "due_date": {
+      "format": "date",
+      "title": "Due Date",
+      "type": "string"
+    },
+    "follow_up_notes": {
+      "title": "Follow-up Notes",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "linked_policy": {
+      "format": "uuid",
+      "relation": "Policy",
+      "title": "Linked Policy",
+      "type": "string"
+    },
+    "linked_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Linked Risk",
+      "type": "string"
+    },
+    "meeting": {
+      "format": "uuid",
+      "relation": "Meeting",
+      "title": "Meeting",
+      "type": "string"
+    },
+    "priority": {
+      "default": "Medium",
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "status": {
+      "default": "Open",
+      "enum": [
+        "Open",
+        "In Progress",
+        "Complete",
+        "Overdue"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "description": "Daily check of rolling 12-month totals per employee+counterparty; flags pairs exceeding the threshold (drip bribery).",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 6 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "gift_cumulative_check",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "check": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "giftCumulativeCheck",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Run cumulative check",
+            "description": "12-month rolling totals"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Gifts & Hospitality \u2014 Cumulative Drip Check"
+}

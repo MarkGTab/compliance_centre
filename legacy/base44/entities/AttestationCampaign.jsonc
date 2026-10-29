@@ -1,0 +1,205 @@
+{
+  "name": "AttestationCampaign",
+  "properties": {
+    "allow_exceptions": {
+      "default": "No",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Allow Exceptions",
+      "type": "string"
+    },
+    "audience": {
+      "description": "Specific employees targeted by this campaign (login optional)",
+      "items": {
+        "format": "uuid",
+        "relation": "Employee",
+        "type": "string"
+      },
+      "title": "Audience (Employees)",
+      "type": "array"
+    },
+    "audience_departments": {
+      "description": "Whole departments targeted - all active employees assigned to these are included",
+      "items": {
+        "format": "uuid",
+        "relation": "Department",
+        "type": "string"
+      },
+      "title": "Audience (Departments)",
+      "type": "array"
+    },
+    "audience_roles": {
+      "description": "All employees whose linked account has one of these roles are included",
+      "items": {
+        "enum": [
+          "admin",
+          "risk_team",
+          "department_head",
+          "read_only"
+        ],
+        "type": "string"
+      },
+      "title": "Audience (Roles)",
+      "type": "array"
+    },
+    "campaign_ref": {
+      "description": "Auto-generated unique reference for this attestation campaign",
+      "title": "Campaign Reference",
+      "type": "string"
+    },
+    "due_date": {
+      "format": "date",
+      "title": "Due Date",
+      "type": "string"
+    },
+    "frequency": {
+      "default": "One-off",
+      "enum": [
+        "One-off",
+        "Monthly",
+        "Quarterly",
+        "Annual"
+      ],
+      "title": "Frequency",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "issue_date": {
+      "format": "date",
+      "title": "Issue Date",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "linked_control": {
+      "format": "uuid",
+      "relation": "Control",
+      "title": "Linked Control",
+      "type": "string"
+    },
+    "linked_policy": {
+      "format": "uuid",
+      "relation": "Policy",
+      "title": "Linked Policy",
+      "type": "string"
+    },
+    "linked_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Linked Risk",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Usually Compliance / CRO - an Employee",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "statement": {
+      "description": "The declaration the responder confirms (rich text)",
+      "title": "Statement",
+      "type": "string"
+    },
+    "status": {
+      "default": "Draft",
+      "enum": [
+        "Draft",
+        "Active",
+        "Closed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "type": {
+      "default": "Policy Attestation",
+      "enum": [
+        "Policy Attestation",
+        "Conflicts of Interest Declaration",
+        "Gifts & Hospitality Nil Return",
+        "Code of Conduct",
+        "SMCR Conduct Rules",
+        "Fitness & Propriety",
+        "Control Owner Sign-off",
+        "Risk Owner Sign-off",
+        "Training Confirmation",
+        "Other"
+      ],
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "type"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

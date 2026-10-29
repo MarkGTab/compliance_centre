@@ -1,0 +1,89 @@
+{
+  "name": "ConflictOfInterest",
+  "properties": {
+    "date_identified": {
+      "format": "date",
+      "title": "Date Identified",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "mitigation": {
+      "title": "Mitigation",
+      "type": "string"
+    },
+    "nature_of_conflict": {
+      "title": "Nature of Conflict",
+      "type": "string"
+    },
+    "person": {
+      "title": "Person",
+      "type": "string"
+    },
+    "raised_by": {
+      "description": "Employee who declared the conflict (e.g. via an attestation).",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Raised By",
+      "type": "string"
+    },
+    "related_parties": {
+      "title": "Related Parties",
+      "type": "string"
+    },
+    "review_date": {
+      "format": "date",
+      "title": "Review Date",
+      "type": "string"
+    },
+    "source_attestation": {
+      "description": "The attestation response that raised this conflict, if applicable.",
+      "format": "uuid",
+      "relation": "AttestationResponse",
+      "title": "Source Attestation",
+      "type": "string"
+    },
+    "status": {
+      "default": "Active",
+      "enum": [
+        "Under Review",
+        "Active",
+        "Mitigated",
+        "Closed"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "person",
+    "nature_of_conflict"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

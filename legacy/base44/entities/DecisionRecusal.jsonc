@@ -1,0 +1,62 @@
+{
+  "name": "DecisionRecusal",
+  "properties": {
+    "decision": {
+      "format": "uuid",
+      "relation": "Decision",
+      "title": "Decision",
+      "type": "string"
+    },
+    "employee": {
+      "description": "The present member recused from this specific decision.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Employee",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "linked_conflict": {
+      "description": "Optional link to a Conflicts of Interest register entry.",
+      "format": "uuid",
+      "relation": "ConflictOfInterest",
+      "title": "Linked Conflict",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision",
+    "employee"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

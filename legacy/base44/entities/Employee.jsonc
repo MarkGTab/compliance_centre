@@ -1,0 +1,93 @@
+{
+  "name": "Employee",
+  "properties": {
+    "department": {
+      "format": "uuid",
+      "relation": "Department",
+      "title": "Department",
+      "type": "string"
+    },
+    "email": {
+      "format": "email",
+      "title": "Email",
+      "type": "string"
+    },
+    "full_name": {
+      "title": "Full Name",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "job_title": {
+      "title": "Job Title / Role",
+      "type": "string"
+    },
+    "line_manager": {
+      "description": "Self-referencing link to another Employee record.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Line Manager",
+      "type": "string"
+    },
+    "linked_user": {
+      "description": "Platform User/auth account - populated only when requires_login = Yes.",
+      "format": "uuid",
+      "relation": "User",
+      "title": "Linked User Account",
+      "type": "string"
+    },
+    "mobile": {
+      "title": "Mobile",
+      "type": "string"
+    },
+    "requires_login": {
+      "default": "No",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Requires Login",
+      "type": "string"
+    },
+    "status": {
+      "default": "Active",
+      "enum": [
+        "Active",
+        "Leaver"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name",
+    "email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

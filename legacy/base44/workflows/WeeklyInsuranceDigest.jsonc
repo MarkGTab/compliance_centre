@@ -1,0 +1,45 @@
+{
+  "description": "Weekly: email CRO/Compliance (admins) a digest of insurance due for renewal or lapsed in the next 60 days.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "10 8 * * 1",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "weekly_insurance_digest",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "digest": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "weeklyInsuranceDigest",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Weekly insurance digest",
+            "description": "Due/lapsed digest to admins"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Weekly Insurance Digest"
+}

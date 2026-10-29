@@ -1,0 +1,124 @@
+{
+  "name": "Meeting",
+  "properties": {
+    "agenda": {
+      "title": "Agenda",
+      "type": "string"
+    },
+    "apologies": {
+      "description": "Superseded by the Attendance register. Retained only to migrate historical meetings.",
+      "items": {
+        "format": "uuid",
+        "relation": "Employee",
+        "type": "string"
+      },
+      "title": "Apologies (legacy)",
+      "type": "array"
+    },
+    "attendees": {
+      "description": "Superseded by the Attendance register. Retained only to migrate historical meetings.",
+      "items": {
+        "format": "uuid",
+        "relation": "Employee",
+        "type": "string"
+      },
+      "title": "Attendees (legacy)",
+      "type": "array"
+    },
+    "chair": {
+      "description": "Employee chairing the meeting.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Chair",
+      "type": "string"
+    },
+    "committee": {
+      "default": "Board",
+      "enum": [
+        "Board",
+        "Board Risk Committee",
+        "ERC",
+        "Credit Committee",
+        "Other"
+      ],
+      "title": "Committee",
+      "type": "string"
+    },
+    "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "location": {
+      "title": "Location",
+      "type": "string"
+    },
+    "minutes": {
+      "title": "Minutes",
+      "type": "string"
+    },
+    "next_meeting_date": {
+      "format": "date",
+      "title": "Next Meeting Date",
+      "type": "string"
+    },
+    "pack_attachment": {
+      "format": "uri",
+      "title": "Pack Attachment",
+      "type": "string"
+    },
+    "required_quorum": {
+      "description": "Snapshot of the committee quorum (number of present members required) copied onto the meeting at creation.",
+      "minimum": 0,
+      "title": "Required Quorum",
+      "type": "integer"
+    },
+    "status": {
+      "default": "Scheduled",
+      "enum": [
+        "Scheduled",
+        "Held",
+        "Minutes Draft",
+        "Minutes Approved"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

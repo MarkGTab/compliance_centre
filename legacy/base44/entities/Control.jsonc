@@ -1,0 +1,157 @@
+{
+  "name": "Control",
+  "properties": {
+    "control_ref": {
+      "title": "Control Reference",
+      "type": "string"
+    },
+    "department": {
+      "format": "uuid",
+      "relation": "Department",
+      "title": "Department",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "design_effectiveness": {
+      "enum": [
+        "Strong",
+        "Adequate",
+        "Weak"
+      ],
+      "title": "Design Effectiveness",
+      "type": "string"
+    },
+    "evidence_link": {
+      "format": "uri",
+      "title": "Evidence Link",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "last_tested": {
+      "format": "date",
+      "title": "Last Tested",
+      "type": "string"
+    },
+    "linked_risks": {
+      "description": "Many-to-many links to Risk records",
+      "items": {
+        "format": "uuid",
+        "relation": "Risk",
+        "type": "string"
+      },
+      "title": "Linked Risks",
+      "type": "array"
+    },
+    "operating_effectiveness": {
+      "enum": [
+        "Strong",
+        "Adequate",
+        "Weak"
+      ],
+      "title": "Operating Effectiveness",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee who owns this control.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "test_frequency": {
+      "title": "Test Frequency",
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "Preventive",
+        "Detective",
+        "Corrective"
+      ],
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "control_ref",
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

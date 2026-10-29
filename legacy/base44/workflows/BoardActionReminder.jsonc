@@ -1,0 +1,45 @@
+{
+  "description": "Daily: email assignees a reminder for board actions due within 3 days.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "board_action_reminder",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "remind": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "remindBoardActions",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "3-day board action reminders",
+            "description": "Emails assignees before due date"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "30 7 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Board Action 3-Day Reminder"
+}

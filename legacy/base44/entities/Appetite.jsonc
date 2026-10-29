@@ -1,0 +1,80 @@
+{
+  "name": "Appetite",
+  "properties": {
+    "appetite_level": {
+      "enum": [
+        "Open",
+        "Cautious",
+        "Moderate",
+        "Averse",
+        "Zero"
+      ],
+      "title": "Appetite Level",
+      "type": "string"
+    },
+    "category": {
+      "format": "uuid",
+      "relation": "RiskCategory",
+      "title": "Category",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "max_residual_score": {
+      "description": "Highest residual score (1-25) inside appetite for risks in this category. Defaults from the appetite level if blank.",
+      "maximum": 25,
+      "minimum": 1,
+      "title": "Appetite Limit (max residual score)",
+      "type": "integer"
+    },
+    "metric": {
+      "title": "Metric",
+      "type": "string"
+    },
+    "qualitative_statement": {
+      "title": "Qualitative Statement",
+      "type": "string"
+    },
+    "threshold": {
+      "title": "Threshold",
+      "type": "string"
+    },
+    "tolerance_score": {
+      "description": "Above the appetite limit but at or below this = Amber (outside appetite, within tolerance). Above = Red.",
+      "maximum": 25,
+      "minimum": 1,
+      "title": "Tolerance (max residual score)",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "category"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,89 @@
+{
+  "name": "Incident",
+  "properties": {
+    "category": {
+      "format": "uuid",
+      "relation": "RiskCategory",
+      "title": "Category",
+      "type": "string"
+    },
+    "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "financial_impact": {
+      "title": "Financial Impact (GBP)",
+      "type": "number"
+    },
+    "incident_ref": {
+      "title": "Incident Reference",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "lessons_learned_status": {
+      "title": "Lessons Learned Status",
+      "type": "string"
+    },
+    "linked_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Linked Risk",
+      "type": "string"
+    },
+    "remediation_status": {
+      "title": "Remediation Status",
+      "type": "string"
+    },
+    "root_cause": {
+      "title": "Root Cause",
+      "type": "string"
+    }
+  },
+  "required": [
+    "incident_ref",
+    "description"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

@@ -1,0 +1,65 @@
+{
+  "name": "RiskCategory",
+  "properties": {
+    "appetite_position": {
+      "title": "Appetite Position",
+      "type": "string"
+    },
+    "category_owner": {
+      "description": "Employee who owns this risk category.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Category Owner",
+      "type": "string"
+    },
+    "definition": {
+      "title": "Definition",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "rag": {
+      "enum": [
+        "Green",
+        "Amber",
+        "Red"
+      ],
+      "title": "RAG",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

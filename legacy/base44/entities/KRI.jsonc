@@ -1,0 +1,168 @@
+{
+  "name": "KRI",
+  "properties": {
+    "amber_threshold": {
+      "title": "Amber Threshold",
+      "type": "string"
+    },
+    "amber_trigger": {
+      "description": "Numeric early-warning trigger, in the KRI's unit (e.g. 5000000 for GBP 5m, 75 for 75%).",
+      "title": "Amber Trigger",
+      "type": "number"
+    },
+    "current_value": {
+      "title": "Current Value",
+      "type": "string"
+    },
+    "current_value_num": {
+      "title": "Current Value (numeric)",
+      "type": "number"
+    },
+    "data_source": {
+      "title": "Data Source",
+      "type": "string"
+    },
+    "direction": {
+      "default": "Higher is worse",
+      "description": "Whether a higher or a lower value is worse. Drives the RAG.",
+      "enum": [
+        "Higher is worse",
+        "Lower is worse"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "frequency": {
+      "title": "Frequency",
+      "type": "string"
+    },
+    "green_threshold": {
+      "title": "Green Threshold",
+      "type": "string"
+    },
+    "indicator": {
+      "title": "Indicator",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_updated": {
+      "format": "date",
+      "title": "Last Updated",
+      "type": "string"
+    },
+    "linked_category": {
+      "format": "uuid",
+      "relation": "RiskCategory",
+      "title": "Linked Category",
+      "type": "string"
+    },
+    "linked_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Linked Risk",
+      "type": "string"
+    },
+    "next_update_due": {
+      "format": "date",
+      "title": "Next Update Due",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee who owns this KRI.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "red_threshold": {
+      "title": "Red Threshold",
+      "type": "string"
+    },
+    "red_trigger": {
+      "description": "Numeric limit, in the KRI's unit. Breach = Red.",
+      "title": "Red Trigger / Limit",
+      "type": "number"
+    },
+    "trend": {
+      "enum": [
+        "Improving",
+        "Stable",
+        "Worsening"
+      ],
+      "title": "Trend",
+      "type": "string"
+    },
+    "unit": {
+      "enum": [
+        "%",
+        "GBP",
+        "Count",
+        "Ratio",
+        "Days",
+        "Months",
+        "bps",
+        "Other"
+      ],
+      "title": "Unit",
+      "type": "string"
+    }
+  },
+  "required": [
+    "indicator"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

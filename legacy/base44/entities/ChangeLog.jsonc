@@ -1,0 +1,95 @@
+{
+  "name": "ChangeLog",
+  "properties": {
+    "action": {
+      "enum": [
+        "created",
+        "updated",
+        "deleted"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "changes": {
+      "title": "Changes (JSON)",
+      "type": "string"
+    },
+    "entity": {
+      "enum": [
+        "Risk",
+        "Control",
+        "Action",
+        "Incident",
+        "Meeting",
+        "Policy",
+        "InsurancePolicy",
+        "Decision",
+        "BoardAction",
+        "Appetite",
+        "ConflictOfInterest",
+        "ThirdParty",
+        "EmergingRisk",
+        "KRI",
+        "Department",
+        "RiskCategory",
+        "GiftHospitality",
+        "AttestationCampaign",
+        "AttestationResponse",
+        "Permission",
+        "Employee",
+        "Attendance",
+        "Committee",
+        "StandingMember",
+        "DecisionRecusal",
+        "GiftHospitalityDeclaration",
+        "KRIReading",
+        "ReportDefinition"
+      ],
+      "title": "Entity",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "record_id": {
+      "title": "Record ID",
+      "type": "string"
+    },
+    "record_ref": {
+      "title": "Record Reference",
+      "type": "string"
+    },
+    "timestamp": {
+      "title": "Timestamp",
+      "type": "string"
+    },
+    "user": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "User",
+      "type": "string"
+    },
+    "user_name": {
+      "title": "User Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "entity",
+    "action"
+  ],
+  "rls": {
+    "create": true,
+    "delete": false,
+    "read": true,
+    "update": false
+  },
+  "type": "object"
+}

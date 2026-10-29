@@ -1,0 +1,87 @@
+{
+  "name": "Attendance",
+  "properties": {
+    "attendance_status": {
+      "default": "Invited",
+      "enum": [
+        "Invited",
+        "Present",
+        "Apologies",
+        "Absent",
+        "Recused"
+      ],
+      "title": "Attendance Status",
+      "type": "string"
+    },
+    "invitee": {
+      "description": "The employee invited to the meeting.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Invitee",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "linked_conflict": {
+      "description": "Optional link to a Conflicts of Interest register entry raised by this recusal.",
+      "format": "uuid",
+      "relation": "ConflictOfInterest",
+      "title": "Linked Conflict",
+      "type": "string"
+    },
+    "meeting": {
+      "format": "uuid",
+      "relation": "Meeting",
+      "title": "Meeting",
+      "type": "string"
+    },
+    "recusal_reason": {
+      "description": "Used when the invitee is recused from the whole meeting.",
+      "title": "Recusal Reason",
+      "type": "string"
+    },
+    "role_at_meeting": {
+      "default": "Member",
+      "enum": [
+        "Chair",
+        "Member",
+        "Secretary",
+        "Attendee",
+        "Guest"
+      ],
+      "title": "Role at Meeting",
+      "type": "string"
+    }
+  },
+  "required": [
+    "meeting",
+    "invitee"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

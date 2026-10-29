@@ -1,0 +1,45 @@
+{
+  "name": "Attestation Reminder & Escalation",
+  "description": "Daily: reminds attestation responders 7/1/0 days before due, and escalates overdue responses to the campaign owner and department heads.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 9 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "attestation_reminder_escalation",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "attestationReminderEscalate",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send attestation reminders & escalate overdue",
+            "description": "Daily 9am"
+          }
+        }
+      }
+    ]
+  }
+}

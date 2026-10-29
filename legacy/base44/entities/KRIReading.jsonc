@@ -1,0 +1,98 @@
+{
+  "name": "KRIReading",
+  "properties": {
+    "commentary": {
+      "title": "Commentary",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "kri": {
+      "description": "KRI id",
+      "title": "KRI",
+      "type": "string"
+    },
+    "period_date": {
+      "format": "date",
+      "title": "Period / As-at Date",
+      "type": "string"
+    },
+    "rag": {
+      "enum": [
+        "Green",
+        "Amber",
+        "Red"
+      ],
+      "title": "RAG",
+      "type": "string"
+    },
+    "recorded_by": {
+      "description": "Employee id",
+      "title": "Recorded By",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value",
+      "type": "number"
+    }
+  },
+  "required": [
+    "kri",
+    "period_date",
+    "value"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

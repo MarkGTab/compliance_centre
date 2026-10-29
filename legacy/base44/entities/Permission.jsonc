@@ -1,0 +1,102 @@
+{
+  "name": "Permission",
+  "properties": {
+    "can_edit": {
+      "default": "No",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Can Edit",
+      "type": "string"
+    },
+    "can_view": {
+      "default": "No",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Can View",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "section": {
+      "description": "One application section. One record per user per section; absence means denied by default.",
+      "enum": [
+        "Dashboard",
+        "My Work",
+        "Risk Register",
+        "Project & Change",
+        "Departments",
+        "Controls",
+        "KRI Dashboard",
+        "Actions Tracker",
+        "Incidents & Loss",
+        "Conflicts of Interest",
+        "Emerging Risks",
+        "Appetite",
+        "Policy Suite",
+        "Policy Report",
+        "Insurance",
+        "Insurance Report",
+        "Third-Party",
+        "Gifts & Hospitality",
+        "Gifts & Hospitality Report",
+        "Meetings",
+        "Committees",
+        "Board Actions",
+        "My Board Actions",
+        "Attendance Report",
+        "ERC Pack",
+        "Attestations",
+        "Attestation Report",
+        "My Attestations",
+        "Audit Trail",
+        "Permissions",
+        "Employees",
+        "Reports",
+        "Administration"
+      ],
+      "title": "Section",
+      "type": "string"
+    },
+    "user": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "User",
+      "type": "string"
+    }
+  },
+  "required": [
+    "user",
+    "section"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

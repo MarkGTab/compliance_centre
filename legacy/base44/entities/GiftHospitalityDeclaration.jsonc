@@ -1,0 +1,202 @@
+{
+  "name": "GiftHospitalityDeclaration",
+  "properties": {
+    "applicable_threshold": {
+      "description": "Snapshot of the threshold that applied at submission - fixes the compliance result against the rules in force at the time.",
+      "title": "Applicable Threshold (GBP)",
+      "type": "number"
+    },
+    "approval_date": {
+      "format": "date",
+      "title": "Approval Date",
+      "type": "string"
+    },
+    "approver": {
+      "description": "Employee who approved this declaration.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Approver",
+      "type": "string"
+    },
+    "compliance_status": {
+      "enum": [
+        "Within Policy",
+        "Requires Review",
+        "BREACH"
+      ],
+      "title": "Compliance Status",
+      "type": "string"
+    },
+    "counterparty": {
+      "title": "Counterparty",
+      "type": "string"
+    },
+    "counterparty_relationship": {
+      "enum": [
+        "Client/Borrower",
+        "Broker/Introducer",
+        "Supplier/Vendor",
+        "Professional Adviser",
+        "Other"
+      ],
+      "title": "Counterparty Relationship",
+      "type": "string"
+    },
+    "cumulative_flag": {
+      "default": false,
+      "description": "Set when rolling 12-month total for this employee+counterpair exceeds threshold",
+      "title": "Cumulative Flag",
+      "type": "boolean"
+    },
+    "cumulative_value": {
+      "title": "Cumulative 12m Value (GBP)",
+      "type": "number"
+    },
+    "date": {
+      "format": "date",
+      "title": "Date",
+      "type": "string"
+    },
+    "declaration_ref": {
+      "description": "Auto-generated unique reference for this declaration",
+      "title": "Declaration Reference",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "direction": {
+      "default": "Received",
+      "enum": [
+        "Received",
+        "Given"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "employee": {
+      "description": "The TAB employee this declaration concerns.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Employee",
+      "type": "string"
+    },
+    "estimated_value": {
+      "title": "Estimated Value (GBP)",
+      "type": "number"
+    },
+    "governing_policy": {
+      "format": "uuid",
+      "relation": "Policy",
+      "title": "Governing Policy",
+      "type": "string"
+    },
+    "governing_policy_name": {
+      "title": "Governing Policy Name",
+      "type": "string"
+    },
+    "governing_policy_version": {
+      "title": "Governing Policy Version",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_modified_by": {
+      "format": "uuid",
+      "relation": "User",
+      "title": "Last Modified By",
+      "type": "string"
+    },
+    "last_modified_date": {
+      "title": "Last Modified Date",
+      "type": "string"
+    },
+    "linked_conflict": {
+      "format": "uuid",
+      "relation": "ConflictOfInterest",
+      "title": "Linked Conflict",
+      "type": "string"
+    },
+    "mitigation_notes": {
+      "title": "Mitigation Notes",
+      "type": "string"
+    },
+    "prior_approval_obtained": {
+      "enum": [
+        "Yes",
+        "No",
+        "N/A"
+      ],
+      "title": "Prior Approval Obtained",
+      "type": "string"
+    },
+    "prior_approval_required": {
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Prior Approval Required",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "status": {
+      "default": "Submitted",
+      "enum": [
+        "Submitted",
+        "Under Review",
+        "Recorded",
+        "Declined"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "submission_document": {
+      "format": "uri",
+      "title": "Submission Document",
+      "type": "string"
+    },
+    "type": {
+      "default": "Gift",
+      "enum": [
+        "Gift",
+        "Hospitality"
+      ],
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "declaration_ref"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

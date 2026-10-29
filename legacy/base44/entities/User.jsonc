@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "is_test_data": {
+      "type": "string",
+      "title": "Test Data",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "default": "No"
+    },
+    "role": {
+      "type": "string",
+      "description": "The role of the user in the app",
+      "enum": [
+        "admin",
+        "risk_team",
+        "department_head",
+        "read_only"
+      ]
+    },
+    "department": {
+      "type": "string",
+      "title": "Department",
+      "description": "The department this user belongs to. Drives attestation campaign audiences - a campaign targeting a department includes every user assigned to it, and reissues pick up the then-current membership.",
+      "format": "uuid",
+      "relation": "Department"
+    }
+  },
+  "required": [
+    "role"
+  ],
+  "name": "User",
+  "type": "object"
+}

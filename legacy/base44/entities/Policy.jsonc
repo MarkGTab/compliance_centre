@@ -1,0 +1,137 @@
+{
+  "name": "Policy",
+  "properties": {
+    "absolute_prohibition_limit": {
+      "description": "Optional. Items at or above this value must never be accepted regardless of approval - auto BREACH.",
+      "title": "Absolute Prohibition Limit (GBP)",
+      "type": "number"
+    },
+    "approval_date": {
+      "format": "date",
+      "title": "Approval Date",
+      "type": "string"
+    },
+    "approved_by": {
+      "title": "Approved By",
+      "type": "string"
+    },
+    "cumulative_limit": {
+      "description": "Optional. Rolling 12-month aggregate per employee + counterparty above which pairs are flagged.",
+      "title": "Cumulative 12-month Limit (GBP)",
+      "type": "number"
+    },
+    "department": {
+      "format": "uuid",
+      "relation": "Department",
+      "title": "Department",
+      "type": "string"
+    },
+    "gift_approval_threshold": {
+      "description": "Gifts at or above this value require prior approval.",
+      "title": "Gift Approval Threshold (GBP)",
+      "type": "number"
+    },
+    "governs_gh_register": {
+      "default": "No",
+      "description": "Marks this as the single policy whose thresholds drive the Gifts & Hospitality compliance test. Only one policy should carry Yes at a time.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Governs Gifts & Hospitality Register",
+      "type": "string"
+    },
+    "hospitality_approval_threshold": {
+      "description": "Hospitality at or above this value require prior approval.",
+      "title": "Hospitality Approval Threshold (GBP)",
+      "type": "number"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "limits_effective_date": {
+      "format": "date",
+      "title": "Limits Effective Date",
+      "type": "string"
+    },
+    "next_review_date": {
+      "format": "date",
+      "title": "Next Review Date",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee who owns this policy.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "policy_document": {
+      "format": "uri",
+      "title": "Policy Document",
+      "type": "string"
+    },
+    "policy_name": {
+      "title": "Policy Name",
+      "type": "string"
+    },
+    "review_frequency": {
+      "enum": [
+        "6 months",
+        "Annual",
+        "2 years",
+        "3 years"
+      ],
+      "title": "Review Frequency",
+      "type": "string"
+    },
+    "status": {
+      "default": "Current",
+      "enum": [
+        "Current",
+        "Due for Review",
+        "Overdue",
+        "Archived"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "policy_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

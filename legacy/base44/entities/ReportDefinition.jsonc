@@ -1,0 +1,155 @@
+{
+  "name": "ReportDefinition",
+  "properties": {
+    "columns": {
+      "title": "Columns (JSON)",
+      "type": "string"
+    },
+    "filters": {
+      "title": "Filters (JSON)",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "last_run": {
+      "title": "Last Run",
+      "type": "string"
+    },
+    "name": {
+      "title": "Report Name",
+      "type": "string"
+    },
+    "schedule_format": {
+      "default": "Excel",
+      "enum": [
+        "Excel",
+        "PDF"
+      ],
+      "title": "Schedule Format",
+      "type": "string"
+    },
+    "schedule_frequency": {
+      "default": "None",
+      "enum": [
+        "None",
+        "Daily",
+        "Weekly",
+        "Monthly"
+      ],
+      "title": "Schedule Frequency",
+      "type": "string"
+    },
+    "schedule_recipients": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Schedule Recipients",
+      "type": "array"
+    },
+    "sort_direction": {
+      "default": "asc",
+      "enum": [
+        "asc",
+        "desc"
+      ],
+      "title": "Sort Direction",
+      "type": "string"
+    },
+    "sort_field": {
+      "title": "Sort Field",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "Risks",
+        "Controls",
+        "KRIs",
+        "Actions",
+        "Incidents",
+        "Policies",
+        "Insurance",
+        "Gifts & Hospitality",
+        "Attestations",
+        "Conflicts of Interest",
+        "Third-Party",
+        "Meeting Attendance",
+        "Employees"
+      ],
+      "title": "Data Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "source"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "risk_team"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "department_head"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object"
+}

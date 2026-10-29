@@ -1,0 +1,77 @@
+{
+  "name": "EmergingRisk",
+  "properties": {
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "likelihood_horizon": {
+      "enum": [
+        "0-3 months",
+        "3-6 months",
+        "6-12 months",
+        "12+ months"
+      ],
+      "title": "Likelihood Horizon",
+      "type": "string"
+    },
+    "owner": {
+      "description": "Employee monitoring this emerging risk.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "potential_impact": {
+      "title": "Potential Impact",
+      "type": "string"
+    },
+    "theme": {
+      "title": "Theme",
+      "type": "string"
+    },
+    "watch_status": {
+      "default": "Watching",
+      "enum": [
+        "Watching",
+        "Escalated",
+        "Monitoring",
+        "Closed"
+      ],
+      "title": "Watch Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "theme"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

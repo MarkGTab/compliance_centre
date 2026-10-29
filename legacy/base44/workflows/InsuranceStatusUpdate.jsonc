@@ -1,0 +1,45 @@
+{
+  "description": "Daily: set insurance policies to Due for Renewal (within 60 days) or Lapsed (past expiry).",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "5 7 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "insurance_status_update",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "update": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "updateInsuranceStatuses",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Update insurance renewal statuses",
+            "description": "Due for Renewal / Lapsed"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Insurance Status Update"
+}

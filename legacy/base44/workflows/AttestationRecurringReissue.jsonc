@@ -1,0 +1,45 @@
+{
+  "name": "Attestation Recurring Reissue",
+  "description": "Daily: clones recurring attestation campaigns (Monthly/Quarterly/Annual) whose next issue date has arrived, closes the prior round, and issues the new round.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * *",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "attestation_recurring_reissue",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "reissueRecurringAttestations",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Reissue recurring attestation rounds",
+            "description": "Daily 8am"
+          }
+        }
+      }
+    ]
+  }
+}

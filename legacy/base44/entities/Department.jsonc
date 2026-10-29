@@ -1,0 +1,61 @@
+{
+  "name": "Department",
+  "properties": {
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "head": {
+      "description": "Employee who heads this department.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Head",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "line_of_defence": {
+      "enum": [
+        "First",
+        "Second",
+        "Third"
+      ],
+      "title": "Line of Defence",
+      "type": "string"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

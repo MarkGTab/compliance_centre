@@ -1,0 +1,144 @@
+{
+  "name": "InsurancePolicy",
+  "properties": {
+    "broker": {
+      "title": "Broker",
+      "type": "string"
+    },
+    "cover_type": {
+      "enum": [
+        "PI",
+        "D&O",
+        "Cyber",
+        "Buildings",
+        "Contents",
+        "Employers' Liability",
+        "Public Liability",
+        "Key Person",
+        "Other"
+      ],
+      "title": "Cover Type",
+      "type": "string"
+    },
+    "excess": {
+      "title": "Excess (GBP)",
+      "type": "number"
+    },
+    "expiry_date": {
+      "format": "date",
+      "title": "Expiry Date",
+      "type": "string"
+    },
+    "inception_date": {
+      "format": "date",
+      "title": "Inception Date",
+      "type": "string"
+    },
+    "insurer": {
+      "title": "Insurer",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "key_exclusions": {
+      "title": "Key Exclusions",
+      "type": "string"
+    },
+    "limit_of_indemnity": {
+      "title": "Limit of Indemnity (GBP)",
+      "type": "number"
+    },
+    "linked_risks": {
+      "description": "Risks this insurance mitigates",
+      "items": {
+        "format": "uuid",
+        "relation": "Risk",
+        "type": "string"
+      },
+      "title": "Linked Risks",
+      "type": "array"
+    },
+    "owner": {
+      "description": "Employee who owns this insurance policy.",
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Owner",
+      "type": "string"
+    },
+    "policy_document": {
+      "format": "uri",
+      "title": "Policy Document",
+      "type": "string"
+    },
+    "policy_name": {
+      "title": "Policy Name",
+      "type": "string"
+    },
+    "policy_number": {
+      "title": "Policy Number",
+      "type": "string"
+    },
+    "premium": {
+      "title": "Premium (GBP)",
+      "type": "number"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "renewal_frequency": {
+      "default": "Annual",
+      "enum": [
+        "Annual",
+        "Other"
+      ],
+      "title": "Renewal Frequency",
+      "type": "string"
+    },
+    "status": {
+      "default": "Active",
+      "enum": [
+        "Active",
+        "Due for Renewal",
+        "Lapsed",
+        "Archived"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "policy_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

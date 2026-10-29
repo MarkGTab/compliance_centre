@@ -1,0 +1,70 @@
+{
+  "name": "Decision",
+  "properties": {
+    "decision_text": {
+      "title": "Decision",
+      "type": "string"
+    },
+    "decision_type": {
+      "default": "Noted",
+      "enum": [
+        "Resolved",
+        "Noted",
+        "Approved",
+        "Deferred"
+      ],
+      "title": "Decision Type",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "meeting": {
+      "format": "uuid",
+      "relation": "Meeting",
+      "title": "Meeting",
+      "type": "string"
+    },
+    "related_policy": {
+      "format": "uuid",
+      "relation": "Policy",
+      "title": "Related Policy",
+      "type": "string"
+    },
+    "related_risk": {
+      "format": "uuid",
+      "relation": "Risk",
+      "title": "Related Risk",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_text"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

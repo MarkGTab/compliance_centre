@@ -1,0 +1,68 @@
+{
+  "name": "StandingMember",
+  "properties": {
+    "active": {
+      "default": true,
+      "description": "Retire a member without deleting the record.",
+      "title": "Active",
+      "type": "boolean"
+    },
+    "committee": {
+      "format": "uuid",
+      "relation": "Committee",
+      "title": "Committee",
+      "type": "string"
+    },
+    "employee": {
+      "format": "uuid",
+      "relation": "Employee",
+      "title": "Employee",
+      "type": "string"
+    },
+    "is_test_data": {
+      "default": "No",
+      "description": "Yes for records seeded for testing only - excluded from go-live and wiped by the Test Data panel.",
+      "enum": [
+        "Yes",
+        "No"
+      ],
+      "title": "Test Data",
+      "type": "string"
+    },
+    "role_at_meeting": {
+      "default": "Member",
+      "enum": [
+        "Chair",
+        "Member",
+        "Secretary",
+        "Attendee",
+        "Guest"
+      ],
+      "title": "Role at Meeting",
+      "type": "string"
+    }
+  },
+  "required": [
+    "committee",
+    "employee"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object"
+}

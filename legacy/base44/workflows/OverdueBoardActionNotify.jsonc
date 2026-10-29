@@ -1,0 +1,45 @@
+{
+  "description": "Daily: flag board actions past due as Overdue and email assignee + meeting chair.",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "overdue_board_action_notify",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyOverdueBoardActions",
+            "args": {}
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Flag overdue board actions & notify",
+            "description": "Emails assignee and chair"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 * * 1-5",
+      "one_time_date": null,
+      "timezone": "Europe/London",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "name": "Overdue Board Action Notification"
+}
