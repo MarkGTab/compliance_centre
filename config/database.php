@@ -64,6 +64,41 @@ return [
             ]) : [],
         ],
 
+        // Existing TAB databases, same env names as tabhq/main. Read-only from this app:
+        // tab_employees + departments (narrative) and doc_store (narrative-qldb; written via the
+        // ledger API, never directly).
+        'narrative' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_NARRATIVE', '127.0.0.1'),
+            'port' => env('DB_HOST_NARRATIVE_PORT', '3306'),
+            'database' => env('DB_DATABASE_NARRATIVE'),
+            'username' => env('DB_USERNAME_NARRATIVE'),
+            'password' => env('DB_PASSWORD_NARRATIVE'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'narrative-qldb' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_QLDB', '127.0.0.1'),
+            'port' => env('DB_PORT_QLDB', '3306'),
+            'database' => env('DB_DATABASE_QLDB'),
+            'username' => env('DB_USERNAME_QLDB'),
+            'password' => env('DB_PASSWORD_QLDB'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
