@@ -19,7 +19,7 @@ Platform services in use, and the replacement for each:
 | `base44.auth.*` (email/password, OTP, Google, invites, reset) | Login, Register, ForgotPassword, ResetPassword, OAuthConsent pages | **Cloudflare Access** (Entra + `@tabhq.com`), JWT verified server-side, same as `reporting`'s `src/Auth/Identity.php`. All six auth pages are **deleted**, not ported |
 | `entities.X.list/filter/get/create/update/delete/bulk*` | All data | REST API on our own DB (see §3) |
 | `entities.X.subscribe` (realtime, 21 uses) | Live refresh of registers/top bar | Drop it: React Query refetch on focus or after mutation. No websockets needed |
-| `Core.SendEmail` (15 uses) | All notifications | Our mailer (Laravel Mail via the existing M365/SMTP setup) |
+| `Core.SendEmail` (15 uses) | All notifications | **Existing Microsoft Graph services from `tabhq/main`**: `App\Services\Microsoft\GraphMailer::sendEmail()` (app token via `Graph::getClientAccessToken()`, `config/office.php`) for email, and `GraphTeams::sendMessageViaWebhook()` for Teams channel alerts (see §5a) |
 | `Core.UploadFile` (4 uses) | Policy/insurance docs, gift evidence, meeting packs | **S3 + the existing `doc_store` table** (see §3a) |
 | `Core.InvokeLLM` (6 uses) | AI assists: risk wording, register/conflict import parsing, policy/insurance/gift doc extraction | Server-side Anthropic API proxy (same pattern as `reporting`'s `InsightsProxy`) |
 | Scheduler + entity triggers | 15 workflows | Cron (Laravel scheduler) + model observers |
@@ -151,6 +151,22 @@ rotation) would need new `rpt_*` views, built on the admin side.
 Most are small (50–130 lines) and of the same shape: load rows, filter by date, send email. The
 shared `loadPeople()` helper (copied into every function) becomes one query on `tab_employees`.
 
+### 5a. Notifications: email and Teams via Microsoft Graph
+
+Answer: reuse the established Graph services in `tabhq/main` (`app/Services/Microsoft/Graph.php`,
+`GraphMailer.php`, `GraphTeams.php`, config `config/office.php`), copied into the compliance
+Laravel app (or shared as a package later).
+
+* **Email:** `GraphMailer::sendEmail($token, $to, $subject, $body, $cc, …, $fromEmail, $fromName)`
+  sends from a mailbox via `/users/{from}/sendMail`. Needs: a sending mailbox (e.g.
+  `compliance@tabhq.com`), and the existing Azure app registration's `Mail.Send` permission scoped
+  to it.
+* **Teams:** `GraphTeams::sendMessageViaWebhook('<channel>', $payload)`. Add one webhook,
+  e.g. `TEAMS_WEBHOOK_TABHQ_COMPLIANCE`, to `config/office.php`'s `teams.webhook` list. Good fits:
+  gift **BREACH** alerts, overdue board actions and the weekly policy/insurance digests, which go to
+  the channel as well as by email to owners.
+* One `Notifier` class wraps both, so each of the 15 jobs just calls `notify(people, channel, message)`.
+
 **Leavers:** `handleEmployeeLeaver` is currently triggered by hand. Once people come from
 `tab_employees`, it can run automatically on a nightly check of `end_date`.
 
@@ -191,12 +207,12 @@ Ranges reflect the open questions in §9.
 | 2 | API: generic CRUD (list/filter/sort/bulk), server-side scoring, change-log, authorisation (roles + section permissions) | 4–6 |
 | 3 | Frontend swap: SDK → API client adapter, AuthContext → `/api/me`, delete 6 auth pages, remove realtime, fix call sites | 4–6 |
 | 4 | People integration: employees/departments from `tab_employees`, pickers, email mapping, leaver handling | 2–3 |
-| 5 | Jobs + emails: 13 scheduled, 2 observers, 6 endpoints, email templates | 5–7 |
+| 5 | Jobs + notifications: 13 scheduled, 2 observers, 6 endpoints, email templates + Teams cards (reusing `GraphMailer`/`GraphTeams`) | 4–6 |
 | 6 | Attestations rework (signed-in flow instead of magic link) | 2–3 |
 | 7 | Files + AI: S3 upload/download via `doc_store` (+ ledger change-log), Anthropic proxy for 6 AI assists | 2–3 |
 | 8 | ~~Data migration~~ (Base44 data is test data): seed reference data only (risk categories, committees, appetite, section permissions) | 1 |
 | 9 | Testing, UAT with Compliance/Risk, parallel run, cutover | 5–8 |
-| | **Total** | **≈ 30–43 days (≈ 6–9 weeks for one developer)** |
+| | **Total** | **≈ 29–42 days (≈ 6–9 weeks for one developer)** |
 
 **Ways to bring it down:**
 * Real registers can be loaded through the app's existing Excel import features (risk register,
@@ -210,7 +226,7 @@ Ranges reflect the open questions in §9.
 1. ~~Work email on `tab_employees`?~~ ✅ Exists.
 2. ~~Live or test data?~~ ✅ Test data: no migration.
 3. ~~File storage?~~ ✅ S3 + `doc_store`.
-4. Email: which sending route (M365 SMTP / Graph, or the mailer `main` uses)?
+4. ~~Email route?~~ ✅ Existing MS Graph `GraphMailer` + `GraphTeams`. *Still needed:* sending mailbox address, and a Teams channel for compliance alerts.
 5. Happy to drop magic-link attestations in favour of sign-in?
-6. Laravel backend, or the lighter `reporting`-style PHP front controller?
+6. ~~Laravel or plain PHP?~~ ✅ Laravel.
 7. Who in Compliance/Risk does UAT, and is a parallel run with Base44 needed?
