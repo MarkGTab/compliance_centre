@@ -96,7 +96,8 @@ editor's **email**.
 | 20 | `cc_attestation_response` | AttestationResponse | 16 | `user` dropped, `employee` kept |
 | 21 | `cc_report_definition` | ReportDefinition | 11 | |
 | 22 | `cc_change_log` | ChangeLog | 9 | append-only audit trail |
-| 23 | `cc_user_role`, `cc_permission`, `cc_department_settings` | User / Permission / Department | — | §2 |
+| 23 | `cc_user_role`, `cc_permission`, `cc_department_settings` | User / Permission / Department | — | §2. Seeded with **mg@tabhq.com as the first `admin`** |
+| 24 | `cc_setting` | (new) | key/value | Admin-editable settings: sender mailbox, Teams channel (§5a) |
 
 **About 26 tables** (21 entity tables + 4 join tables + roles/permissions). Plus standard `id`,
 `created_at`, `updated_at`, `created_by`. Base44 adds `created_date`, `created_by` and `id`
@@ -165,6 +166,15 @@ Laravel app (or shared as a package later).
   e.g. `TEAMS_WEBHOOK_TABHQ_COMPLIANCE`, to `config/office.php`'s `teams.webhook` list. Good fits:
   gift **BREACH** alerts, overdue board actions and the weekly policy/insurance digests, which go to
   the channel as well as by email to owners.
+* **Sender is configurable in Administration**, not hard-coded: a `cc_setting` table (key/value)
+  holds `mail_from_address` (default `compliance@tabhq.com`), `mail_from_name`
+  (default "TAB Compliance") and the Teams channel. Editable by `admin` only, and each change is
+  written to `cc_change_log`. ⚠️ Graph can only send as a mailbox the Azure app is allowed to use,
+  so changing the address in admin must be matched by an Exchange application-access-policy change.
+  The settings page shows a **"Send test email"** button to prove it works before saving.
+* **Dev / staging:** `MAIL_REDIRECT_TO=mg@tabhq.com` in `.env` sends **every** outgoing email to
+  that address (original recipients shown at the top of the body) and suppresses Teams posts, so
+  testing reminders and digests can never email real staff. Unset in production.
 * One `Notifier` class wraps both, so each of the 15 jobs just calls `notify(people, channel, message)`.
 
 **Leavers:** `handleEmployeeLeaver` is currently triggered by hand. Once people come from
@@ -226,7 +236,7 @@ Ranges reflect the open questions in §9.
 1. ~~Work email on `tab_employees`?~~ ✅ Exists.
 2. ~~Live or test data?~~ ✅ Test data: no migration.
 3. ~~File storage?~~ ✅ S3 + `doc_store`.
-4. ~~Email route?~~ ✅ Existing MS Graph `GraphMailer` + `GraphTeams`. *Still needed:* sending mailbox address, and a Teams channel for compliance alerts.
+4. ~~Email route?~~ ✅ Existing MS Graph `GraphMailer` + `GraphTeams`, sending from `compliance@tabhq.com` (configurable in admin); dev redirects all mail to mg@tabhq.com. *Still needed:* a Teams channel + webhook for compliance alerts.
 5. Happy to drop magic-link attestations in favour of sign-in?
 6. ~~Laravel or plain PHP?~~ ✅ Laravel.
 7. Who in Compliance/Risk does UAT, and is a parallel run with Base44 needed?
