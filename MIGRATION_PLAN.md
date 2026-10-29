@@ -1,6 +1,6 @@
 # Compliance Centre — migration off Base44 (rough plan)
 
-**Status:** draft v2 for estimating (updated with answers 29 Oct) · **Source reviewed:** `safe-fiery-guard-flow.zip` (Base44 export of
+**Status:** v3, all open questions answered (29 Oct 2026) · **Source reviewed:** `safe-fiery-guard-flow.zip` (Base44 export of
 "RiskRegister Pro", 29 Oct 2026) · **Author:** Claude Code for mg@tabhq.com
 
 ## 1. What we're migrating
@@ -162,31 +162,34 @@ Laravel app (or shared as a package later).
   sends from a mailbox via `/users/{from}/sendMail`. Needs: a sending mailbox (e.g.
   `compliance@tabhq.com`), and the existing Azure app registration's `Mail.Send` permission scoped
   to it.
-* **Teams:** `GraphTeams::sendMessageViaWebhook('<channel>', $payload)`. Add one webhook,
-  e.g. `TEAMS_WEBHOOK_TABHQ_COMPLIANCE`, to `config/office.php`'s `teams.webhook` list. Good fits:
-  gift **BREACH** alerts, overdue board actions and the weekly policy/insurance digests, which go to
-  the channel as well as by email to owners.
+* **Teams:** the channel is **configurable in Administration** (webhook URL stored in `cc_setting`,
+  encrypted at rest, shown masked, admin-only). The app posts with
+  `GraphTeams::sendTeamsMessageToChannelWithWebhookUrl($url, $payload)`, which takes the URL directly,
+  so no `config/office.php` entry or redeploy is needed to change channel. **Initially set to the
+  existing test channel**; switch it to a live compliance channel at go-live from the admin page.
+  Good fits: gift **BREACH** alerts, overdue board actions and the weekly policy/insurance digests,
+  which go to the channel as well as by email to owners.
 * **Sender is configurable in Administration**, not hard-coded: a `cc_setting` table (key/value)
   holds `mail_from_address` (default `compliance@tabhq.com`), `mail_from_name`
-  (default "TAB Compliance") and the Teams channel. Editable by `admin` only, and each change is
+  (default "TAB Compliance") and the Teams webhook. Editable by `admin` only, and each change is
   written to `cc_change_log`. ⚠️ Graph can only send as a mailbox the Azure app is allowed to use,
   so changing the address in admin must be matched by an Exchange application-access-policy change.
   The settings page shows a **"Send test email"** button to prove it works before saving.
 * **Dev / staging:** `MAIL_REDIRECT_TO=mg@tabhq.com` in `.env` sends **every** outgoing email to
-  that address (original recipients shown at the top of the body) and suppresses Teams posts, so
-  testing reminders and digests can never email real staff. Unset in production.
+  that address (original recipients shown at the top of the body), so testing reminders and digests
+  can never email real staff. Teams posts go to the test channel set in admin. Unset in production.
 * One `Notifier` class wraps both, so each of the 15 jobs just calls `notify(people, channel, message)`.
 
 **Leavers:** `handleEmployeeLeaver` is currently triggered by hand. Once people come from
 `tab_employees`, it can run automatically on a nightly check of `end_date`.
 
-## 6. Security / design decisions to make
+## 6. Security / design decisions
 
-1. **Public attestation magic links** (`/attest/<token>`, no login). Behind Cloudflare Access a
-   public path needs its own **Bypass** application, which suppresses identity (see `reporting`
-   CLAUDE.md). **Recommend dropping magic links**: every attestee is staff with Entra, so the email
-   links to a signed-in "My Attestations" page and the signature is the verified identity, which is
-   stronger audit evidence. This removes 2 functions and the public page.
+1. ✅ **Decided: no public magic links.** Internal use only, so every attestee has a TAB Microsoft
+   account. Attestation emails link to the signed-in "My Attestations" page, and the signature is
+   the verified Cloudflare Access identity (stronger audit evidence). Drops `getPublicAttestation`,
+   `submitPublicAttestation`, the `/attest/<token>` page, and the `token`/`magic_link` fields on
+   `cc_attestation_response`. No Cloudflare Bypass application needed.
 2. **Read access is wide open in Base44.** Almost every entity has `read: true`, so any signed-in
    user can read *all* conflicts of interest, gift declarations and attestation responses via the
    API, whatever the UI hides. The migration is the moment to enforce section permissions
@@ -242,12 +245,24 @@ on day one so they're done by the time the build needs them.
 * At this size, phasing isn't needed to save time. It's only worth doing if Compliance wants the
   registers live before board governance/attestations are ready.
 
-## 9. Open questions (these move the estimate)
+## 9. Decisions log
 
-1. ~~Work email on `tab_employees`?~~ ✅ Exists.
-2. ~~Live or test data?~~ ✅ Test data: no migration.
-3. ~~File storage?~~ ✅ S3 + `doc_store`.
-4. ~~Email route?~~ ✅ Existing MS Graph `GraphMailer` + `GraphTeams`, sending from `compliance@tabhq.com` (configurable in admin); dev redirects all mail to mg@tabhq.com. *Still needed:* a Teams channel + webhook for compliance alerts.
-5. Happy to drop magic-link attestations in favour of sign-in?
-6. ~~Laravel or plain PHP?~~ ✅ Laravel.
-7. Who in Compliance/Risk does UAT, and is a parallel run with Base44 needed?
+| # | Question | Decision |
+|---|---|---|
+| 1 | Work email on `tab_employees`? | ✅ Exists: no schema change |
+| 2 | Live or test data in Base44? | ✅ Test data: no migration, seed reference data only |
+| 3 | File storage? | ✅ S3 via the shared `doc_store` table (§3a) |
+| 4 | Email / Teams? | ✅ Existing MS Graph `GraphMailer` + `GraphTeams`. Sender `compliance@tabhq.com` and Teams webhook (initially the test channel) both configurable in Administration. Dev redirects all email to mg@tabhq.com |
+| 5 | No-login attestation links? | ✅ Dropped: internal use only, sign-in required (§6.1) |
+| 6 | Laravel or plain PHP? | ✅ Laravel |
+| 7 | UAT? | ✅ **Jack Bonner (CRO)**. Set up with the `risk_team` role (or `admin`) in staging. mg@tabhq.com is the first admin |
+
+## 10. Day-one IT requests (they set the elapsed time)
+
+1. Exchange: allow the existing Azure app (`AZURE_CLIENT_ID`) `Mail.Send` as `compliance@tabhq.com`.
+2. Cloudflare Access application for the compliance hostname (Entra + `@tabhq.com`, **no Bypass**).
+3. S3: confirm bucket/prefix (`compliance/…`) and credentials for the new app.
+4. Database: `compliance` schema + a login with read on `tab_employees`/departments and write on
+   `doc_store` (or via `LedgerService`).
+5. Server/vhost + GitHub Actions deploy runner.
+6. Webhook URL for the Teams test channel (entered in admin, not in code).
